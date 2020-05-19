@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<title>Milkcocoa publish</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+
+	<body>
+		<script src="http://cdn.mlkcca.com/v0.6.0/milkcocoa.js"></script>
+
+		<script type="text/javascript">
+			var milkcocoa = new MilkCocoa('leadirgzw0b7.mlkcca.com');
+			var ds = milkcocoa.dataStore('test');
+
+			function OnButtonClick() {
+				var str=document.frm.txt.value;
+				ds.push({'TEXT':str});
+			}
+		</script>
+
+		<form name="frm">
+			<input type="text" name="txt" value=""><br>
+			<input type="button" value="push" onclick="OnButtonClick();"><br>
+		</form>
+	</body>
+</html>

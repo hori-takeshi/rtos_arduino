@@ -1,0 +1,2 @@
+zeroedbg.name=Atmel EDBG Programming Port
+zeroedbg.program.tool=openocd

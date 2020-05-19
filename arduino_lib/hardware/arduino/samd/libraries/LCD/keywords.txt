@@ -1,0 +1,14 @@
+#######################################
+# Syntax Coloring Map For LEDLIB
+#######################################
+
+LCD_m0	KEYWORD1
+
+Inizializza_LCD	KEYWORD2
+Cursore_ON      KEYWORD2
+Cursore_OFF	KEYWORD2
+Scrivi_Car_PC 	KEYWORD2
+Scrivi_Car_PS 	KEYWORD2
+Posizione	KEYWORD2
+Scrivi_Testo	KEYWORD2
+Pulisci		KEYWORD2

@@ -1,0 +1,73 @@
+追加情報
+
+1. Set the BaudRate
+
+INT8U MCP_CAN::mcp2515_init(const INT8U canSpeed)     
+受信バッファを有効にしない．
+
+2. Set Receive Mask and Filter
+
+受信メールボックス毎のマスクとフィルタの構成は次の通りである．
+
+メールボックス0(RXB0) : マスク(RXM0) : フィルタ(RXF0～RXF1)
+メールボックス1(RXB1) : マスク(RXM1) : フィルタ(RXF2～RXF5)
+
+オリジナルからの変更点
+
+個々のメールボックスを指定するように変更．
+
+ 2. Set Receive Mask and Filter
+
+ 3. Check Receive
+
+  INT8U MCP_CAN::checkReceive(uint8_t rxbid);  
+   メールボックス(0,1)を指定可能に変更
+
+ 4. Get CAN ID
+
+  INT32U MCP_CAN::getCanId();
+   廃止
+
+ 5. Send Data
+  sendMsgBuf(uint8_t txbid, INT8U id, INT8U ext, INT8U len, data_buf);
+   廃止sendMsg()をpublicに変更
+   
+  setMsg()  : 内部変数に格納しないようにするため削除
+
+  sendMsg(INT8U txbid, INT32U id, INT8U ext, INT8U len, INT8U rtr, INT8U *pData) 
+  sendMsg(INT8U txbid, INT32U id, INT8U ext, INT8U len, INT8U *p_buf);
+  sendMsg(INT8U txbid, INT32U id, INT8U len, INT8U *p_buf);
+   引数で送信メールボックスのID等を渡すように変更, バリエーションも追加
+   メールボックスの空きは待たずに上書き
+
+  mcp2515_write_canMsg(INT8U txbid, INT32U id, INT8U ext, INT8U len, INT8U rtr, INT8U *pData)
+   引数で送信メールボックスのID等を渡すように変更
+
+  mcp2515_start_transmit(INT8U txbid)   
+   引数で送信メールボックスのIDを渡すように変更
+
+ 6. Receive Data
+
+    INT8U MCP_CAN::readMsgBufID(INT8U rxbid, INT32U *ID, INT8U *len, INT8U buf[])
+     廃止
+
+    CAN.readMsgBuf(uint8_t rxbid, INT32U *ID, INT8U &ext, unsigned char len, unsigned char buf);
+     廃止
+
+    readMsg(INT8U rxbid, INT32U *ID, INT8U *ext, INT8U *rtr, unsigned char *len, unsigned char *buf);
+     メールボックス(0,1)を指定可能に変更．引数のバリエーションの用意
+
+    mcp2515_read_canMsg(    
+ 7. Check additional flags
+    CAN.isRemoteRequest();
+    CAN.isExtendedFrame();
+     廃止
+
+ 8. Check Sent
+    INT8U checkSent(INT8U txbid);
+     メッセージが送信されたか確認．
+
+ 9. 送信の有効
+   INT8U startReceive(INT8U rxbid);
+
+以上．
