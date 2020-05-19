@@ -527,7 +527,7 @@ ifeq ($(TOOL),gcc)
 #  Windowsの場合はフルパスにする
 #
 ifeq ($(UNAME),Windows)
-  GCC_PATH_WIN = $(ARDUINO_BASE_DIR_WIN)\hardware\tools\gcc-arm-none-eabi-4.8.3-2014q1\bin
+  GCC_PATH_WIN = $(ARDUINO_PKG_DIR_WIN)/tools/arm-none-eabi-gcc/7-2017q4/bin
   CC = "$(GCC_PATH_WIN)\$(GCC_TARGET_PREFIX)gcc"
   CXX = "$(GCC_PATH_WIN)\$(GCC_TARGET_PREFIX)g++"
   AS = "$(GCC_PATH_WIN)\$(GCC_TARGET_PREFIX)as"
