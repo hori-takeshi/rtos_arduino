@@ -407,7 +407,7 @@ kernel_cfg.timestamp: $(APPL_CFG) \
 	$(CFG) --pass 2 --kernel asp $(INCLUDES) \
 				-T $(TARGETDIR)/target.tf $(CFG_TABS) $<
 ifeq ($(UNAME), Windows)
-	copy /B kernel_cfg.c +,,
+	cmd.exe /C copy /B kernel_cfg.c +,,
 	echo  -n > kernel_cfg.timestamp
 else
 	touch -r kernel_cfg.c kernel_cfg.timestamp
