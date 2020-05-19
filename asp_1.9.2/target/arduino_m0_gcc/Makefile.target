@@ -28,6 +28,7 @@ else
 ifneq (,$(findstring Windows,$(PATH)))
     UNAME_TARGET := Windows
     ARDUINO_BASE_DIR_WIN = C:\Program Files (x86)\Arduino
+    ARDUINO_PKG_DIR_WIN = ${USERPROFILE}/AppData/Local/Arduino15/packages/arduino
 else
     UNAME_TARGET := MacOS
     ARDUINO_BASE_DIR = /Applications/Arduino.app/Contents/Java
@@ -42,7 +43,12 @@ ifndef ARDUINO_LIB_DIR
 # ARDUINO_LIB_DIR が定義されていなければArduino IDEでインストールされた
 # ライブラリを使用する
 #
+ifeq ($(UNAME_TARGET), Windows)
+ARDUINO_LIB_DIR = $(ARDUINO_PKG_DIR_WIN)
+else
 ARDUINO_LIB_DIR = $(ARDUINO_BASE_DIR)
+endif
+
 endif
 
 ARDUINO_INCLUDES = -I"$(ARDUINO_LIB_DIR)/hardware/tools/CMSIS/CMSIS/Include/" \
