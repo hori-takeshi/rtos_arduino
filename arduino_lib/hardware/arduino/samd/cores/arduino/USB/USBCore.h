@@ -311,8 +311,8 @@ _Pragma("pack()")
 	{ 8, 11, _firstInterface, _count, _class, _subClass, _protocol, 0 }
 /* iadclasscode_r10.pdf, Table 9\96Z. Standard Interface Association Descriptor
  * bLength, bDescriptorType, bFirstInterface, bInterfaceCount, bFunctionClass, bFunctionSubClass, bFunctionProtocol, iFunction */
-#define D_HIDREPORT(_descriptorLength) \
-	{ 9, 0x21, 0x1, 0x1, 0, 1, 0x22, _descriptorLength, 0 }
+//#define D_HIDREPORT(length) { 9, 0x21, 0x01, 0x01, 0, 1, 0x22, lowByte(length), highByte(length) }
+#define D_HIDREPORT(length) { 9, 0x21, 0x01, 0x01, 0, 1, 0x22, ((uint8_t)((length)&0xff)), ((uint8_t)((length)>>8)) }
 /* HID1_11.pdf  E.8 HID Descriptor (Mouse)
  * bLength, bDescriptorType, bcdHID, bCountryCode, bNumDescriptors, bDescriptorType, wItemLength */
  
