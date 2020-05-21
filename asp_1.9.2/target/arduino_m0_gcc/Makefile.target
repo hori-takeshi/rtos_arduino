@@ -153,9 +153,10 @@ ifeq ($(UNAME_TARGET), Cygwin)
      OPENOCD_SCRIPT  = $(ARDUINO_BASE_DIR)\hardware\arduino\samd\variants\arduino_zero\openocd_scripts\arduino_zero.cfg
 endif
 ifeq ($(UNAME_TARGET), Windows)
-     OPENOCD_PATH = $(ARDUINO_BASE_DIR_WIN)\hardware\tools\OpenOCD-0.9.0-arduino\bin\openocd.exe
-     OPENOCD_SCRIPT_PATH = $(ARDUINO_BASE_DIR_WIN)\hardware\tools\OpenOCD-0.9.0-arduino\share\openocd\scripts
-     OPENOCD_SCRIPT  = $(ARDUINO_BASE_DIR_WIN)\hardware\arduino\samd\variants\arduino_zero\openocd_scripts\arduino_zero.cfg
+     OPENOCD_PATH = $(ARDUINO_PKG_DIR_WIN)\tools\OpenOCD\0.10.0-arduino7\bin\openocd.exe
+     OPENOCD_SCRIPT_PATH = $(ARDUINO_PKG_DIR_WIN)\tools\OpenOCD\0.10.0-arduino7\share\openocd\scripts
+     OPENOCD_SCRIPT  = $(ARDUINO_PKG_DIR_WIN)\hardware\samd\1.8.4\variants\arduino_zero\openocd_scripts\arduino_zero.cfg
+     AVRDUDE_DIR= $(ARDUINO_PKG_DIR_WIN)\tools\avrdude\6.3.0-arduino17
 endif
 ifeq ($(UNAME_TARGET), MacOS)
      OPENOCD_PATH = $(ARDUINO_BASE_DIR)/hardware/tools/OpenOCD-0.9.0-arduino/bin/openocd
@@ -177,6 +178,13 @@ ifeq ($(UNAME_TARGET), Cygwin)
 else
 	"$(OPENOCD_PATH)" -s "$(OPENOCD_SCRIPT_PATH)" -f "$(OPENOCD_SCRIPT)" -c "program ./$(OBJNAME).bin 0x4000 reset exit"
 endif
+
+# program via native-USB port.
+run-native: $(OBJNAME).srec
+	$(AVRDUDE_DIR)\bin\avrdude.exe -C${AVRDUDE_DIR}\etc\avrdude.conf \
+	-v -patmega2560 -cstk500v2 \
+	-P$(shell $(subst /,\,$(TARGETDIR))\wait4port\wait4port.bat COM9 $(subst /,\,$(TARGETDIR))) \
+	-b57600 -Uflash:w:./$(OBJNAME).srec
 
 ocd: $(OBJNAME).bin
 ifeq ($(UNAME_TARGET), Cygwin)
