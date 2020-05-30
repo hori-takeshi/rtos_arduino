@@ -56,6 +56,8 @@ ARDUINO_INCLUDES = -I"$(ARDUINO_LIB_DIR)/hardware/tools/CMSIS/CMSIS/Include/" \
                    -I"$(ARDUINO_LIB_DIR)/hardware/arduino/samd/cores/arduino/" \
                    -I"$(ARDUINO_LIB_DIR)/hardware/arduino/samd/variants/arduino_zero/"
 
+R2CA_NATIVE_PORT ?= NotSpecified
+
 #
 #  コンパイルオプション
 #
@@ -183,7 +185,7 @@ endif
 run-native: $(OBJNAME).srec
 	$(AVRDUDE_DIR)\bin\avrdude.exe -C${AVRDUDE_DIR}\etc\avrdude.conf \
 	-v -patmega2560 -cstk500v2 \
-	-P$(shell $(subst /,\,$(TARGETDIR))\wait4port\wait4port.bat COM9 $(subst /,\,$(TARGETDIR))) \
+	-P$(shell $(subst /,\,$(TARGETDIR))\wait4port\wait4port.bat $(R2CA_NATIVE_PORT) $(subst /,\,$(TARGETDIR))) \
 	-b57600 -Uflash:w:./$(OBJNAME).srec
 
 ocd: $(OBJNAME).bin
