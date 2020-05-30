@@ -1,4 +1,5 @@
 #include "r2ca.h"
+#define Serial SerialUSB  // Arduino M0 の場合
 
 /*
  *  For MAINTASK
