@@ -110,6 +110,7 @@ GCC_TARGET = arm-none-eabi
 #  リンカスクリプトの定義
 #
 LDSCRIPT = "$(ARDUINO_LIB_DIR)/hardware/arduino/samd/variants/arduino_zero/linker_scripts/gcc/flash_with_bootloader.ld"
+#LDSCRIPT = "$(ARDUINO_LIB_DIR)/../Seeeduino/hardware/samd/1.7.6/variants/XIAO_m0/linker_scripts/gcc/flash_with_bootloader.ld"
 #LDSCRIPT = "$(ARDUINO_LIB_DIR)/hardware//arduino/samd/variants/arduino_zero/linker_scripts/gcc/flash.ld"
 
 #
@@ -159,6 +160,7 @@ ifeq ($(UNAME_TARGET), Windows)
      OPENOCD_SCRIPT_PATH = $(ARDUINO_PKG_DIR_WIN)\tools\OpenOCD\0.10.0-arduino7\share\openocd\scripts
      OPENOCD_SCRIPT  = $(ARDUINO_PKG_DIR_WIN)\hardware\samd\1.8.4\variants\arduino_zero\openocd_scripts\arduino_zero.cfg
      AVRDUDE_DIR= $(ARDUINO_PKG_DIR_WIN)\tools\avrdude\6.3.0-arduino17
+     BOSSAC_DIR= $(ARDUINO_PKG_DIR_WIN)\tools\bossac\1.7.0-arduino3
 endif
 ifeq ($(UNAME_TARGET), MacOS)
      OPENOCD_PATH = $(ARDUINO_BASE_DIR)/hardware/tools/OpenOCD-0.9.0-arduino/bin/openocd
@@ -187,6 +189,12 @@ run-native: $(OBJNAME).srec
 	-v -patmega2560 -cstk500v2 \
 	-P$(shell $(subst /,\,$(TARGETDIR))\wait4port\wait4port.bat $(R2CA_NATIVE_PORT) $(subst /,\,$(TARGETDIR))) \
 	-b57600 -Uflash:w:./$(OBJNAME).srec
+
+# program with bossac
+run-bossac: $(OBJNAME).bin
+	$(BOSSAC_DIR)\bossac.exe -i -d --port=$(R2CA_NATIVE_PORT) \
+	-U true -i -e  -w -v \
+	$(OBJNAME).bin -R
 
 ocd: $(OBJNAME).bin
 ifeq ($(UNAME_TARGET), Cygwin)
