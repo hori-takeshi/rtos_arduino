@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2014 Arduino.  All right reserved.
+  Copyright (c) 2014-2015 Arduino LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,113 +16,114 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _VARIANT_ARDUINO_ZERO_
-#define _VARIANT_ARDUINO_ZERO_
+#pragma once
 
-/*----------------------------------------------------------------------------
- *        Definitions
- *----------------------------------------------------------------------------*/
+// The definitions here needs a SAMD core >=1.6.10
+#define ARDUINO_SAMD_VARIANT_COMPLIANCE 10610
 
-/** Frequency of the board main oscillator */
-#define VARIANT_MAINOSC		(32768ul)
 
-/** Master clock frequency */
-#define VARIANT_MCK			  (48000000ul)
+#include <WVariant.h>
 
-/*----------------------------------------------------------------------------
- *        Headers
- *----------------------------------------------------------------------------*/
+// General definitions
+// -------------------
 
-#include "WVariant.h"
+// Frequency of the board main oscillator
+#define VARIANT_MAINOSC (32768ul)
 
-#ifdef __cplusplus
-#include "SERCOM.h"
-#include "Uart.h"
-#endif // __cplusplus
+// Master clock frequency
+#define VARIANT_MCK     (F_CPU)
 
-#ifdef __cplusplus
-extern "C"{
-#endif // __cplusplus
-
-/**
- * Libc porting layers
- */
-#if defined (  __GNUC__  )
-#    include <syscalls.h> /** RedHat Newlib minimal stub */
-#endif
-
-/*----------------------------------------------------------------------------
- *        Pins
- *----------------------------------------------------------------------------*/
+// Pins
+// ----
 
 // Number of pins defined in PinDescription array
-#define PINS_COUNT           (34u)
-#define NUM_DIGITAL_PINS     (19u)
-#define NUM_ANALOG_INPUTS    (5u)
+#define PINS_COUNT           (17u)
+#define NUM_DIGITAL_PINS     (17u)
+#define NUM_ANALOG_INPUTS    (11u)
 #define NUM_ANALOG_OUTPUTS   (1u)
 
-#define digitalPinToPort(P)        ( &(PORT->Group[g_APinDescription[P].ulPort]) )
-#define digitalPinToBitMask(P)     ( 1 << g_APinDescription[P].ulPin )
-#define digitalPinToTimer(P)       ( )
-//#define analogInPinToBit(P)        ( )
-#define portOutputRegister(port)   ( &(port->OUT.reg) )
-#define portInputRegister(port)    ( &(port->IN.reg) )
-//#define portModeRegister(P)        (  )
-#define digitalPinHasPWM(P)        ( g_APinDescription[P].ulPWMChannel != NOT_ON_PWM || g_APinDescription[P].ulTCChannel != NOT_ON_TIMER )
+// Low-level pin register query macros
+// -----------------------------------
+#define digitalPinToPort(P)      (&(PORT->Group[g_APinDescription[P].ulPort]))
+#define digitalPinToBitMask(P)   (1 << g_APinDescription[P].ulPin)
+//#define analogInPinToBit(P)    ()
+#define portOutputRegister(port) (&(port->OUT.reg))
+#define portInputRegister(port)  (&(port->IN.reg))
+#define portModeRegister(port)   (&(port->DIR.reg))
+#define digitalPinHasPWM(P)      (g_APinDescription[P].ulPWMChannel != NOT_ON_PWM || g_APinDescription[P].ulTCChannel != NOT_ON_TIMER)
 
-// Interrupts
-#define digitalPinToInterrupt(P)   ( g_APinDescription[P].ulExtInt )
+/*
+ * digitalPinToTimer(..) is AVR-specific and is not defined for SAMD
+ * architecture. If you need to check if a pin supports PWM you must
+ * use digitalPinHasPWM(..).
+ *
+ * https://github.com/arduino/Arduino/issues/1833
+ */
+// #define digitalPinToTimer(P)
+
 
 // LEDs
-#define PIN_LED_13           (13u)
-#define PIN_LED_RXL          (30u)
-#define PIN_LED_TXL          (31u)
-#define PIN_LED              PIN_LED_13
+// ----
+#define PIN_LED_13  (13u)
+#define PIN_LED     PIN_LED_13
+#define LED_BUILTIN PIN_LED
+
+
+#define PIN_LED_RXL          (12u)
+#define PIN_LED_TXL          (11u)
 #define PIN_LED2             PIN_LED_RXL
 #define PIN_LED3             PIN_LED_TXL
-#define LED_BUILTIN          PIN_LED_13
+
+/*
+ * Analog pins
+ */
+#define PIN_A0               (0ul)
+#define PIN_A1               (PIN_A0 + 1)
+#define PIN_A2               (PIN_A0 + 2)
+#define PIN_A3               (PIN_A0 + 3)
+#define PIN_A4               (PIN_A0 + 4)
+#define PIN_A5               (PIN_A0 + 5)
+#define PIN_A6               (PIN_A0 + 6)
+#define PIN_A7               (PIN_A0 + 7)
+#define PIN_A8               (PIN_A0 + 8)
+#define PIN_A9               (PIN_A0 + 9)
+#define PIN_A10              (PIN_A0 + 10)
+
+#define PIN_DAC0             (PIN_A0)
+
+
+static const uint8_t A0  = PIN_A0;
+static const uint8_t A1  = PIN_A1;
+static const uint8_t A2  = PIN_A2;
+static const uint8_t A3  = PIN_A3;
+static const uint8_t A4  = PIN_A4;
+static const uint8_t A5  = PIN_A5;
+static const uint8_t A6  = PIN_A6 ;
+static const uint8_t A7  = PIN_A7 ;
+static const uint8_t A8  = PIN_A8 ;
+static const uint8_t A9  = PIN_A9 ;
+static const uint8_t A10  = PIN_A10 ;
+static const uint8_t DAC0 = PIN_DAC0;
+
+#define ADC_RESOLUTION		12
 
 /*
  * SPI Interfaces
  */
 #define SPI_INTERFACES_COUNT 1
-/*
-#define SPI_INTERFACE        SPI0
-#define SPI_INTERFACE_ID     ID_SPI0
-#define SPI_CHANNELS_NUM 4
-#define PIN_SPI_SS0          (77u)
-#define PIN_SPI_SS1          (87u)
-#define PIN_SPI_SS2          (86u)
-#define PIN_SPI_SS3          (78u)
-*/
-#define PIN_SPI_MOSI         (21u)
-#define PIN_SPI_MISO         (18u)
-#define PIN_SPI_SCK          (20u)
 
-/*
-#define BOARD_SPI_SS0        (10u)
-#define BOARD_SPI_SS1        (4u)
-#define BOARD_SPI_SS2        (52u)
-#define BOARD_SPI_SS3        PIN_SPI_SS3
+// SPI interface for QSPI flash
+#define PIN_SPI_MISO         (9u)
+#define PIN_SPI_SCK          (8u)
+#define PIN_SPI_MOSI         (10u)
+#define PERIPH_SPI           sercom0
+#define PAD_SPI_TX           SPI_PAD_2_SCK_3  // MOSI / SCK
+#define PAD_SPI_RX           SERCOM_RX_PAD_1  // MISO
 
-#define BOARD_SPI_DEFAULT_SS BOARD_SPI_SS3
-
-#define BOARD_PIN_TO_SPI_PIN(x) \
-	(x==BOARD_SPI_SS0 ? PIN_SPI_SS0 : \
-	(x==BOARD_SPI_SS1 ? PIN_SPI_SS1 : \
-	(x==BOARD_SPI_SS2 ? PIN_SPI_SS2 : PIN_SPI_SS3 )))
-#define BOARD_PIN_TO_SPI_CHANNEL(x) \
-	(x==BOARD_SPI_SS0 ? 0 : \
-	(x==BOARD_SPI_SS1 ? 1 : \
-	(x==BOARD_SPI_SS2 ? 2 : 3)))
-
-static const uint8_t SS1  = BOARD_SPI_SS1;
-static const uint8_t SS2  = BOARD_SPI_SS2;
-static const uint8_t SS3  = BOARD_SPI_SS3;*/
-static const uint8_t SS	  = 14;	//GND
-static const uint8_t MOSI = PIN_SPI_MOSI;
-static const uint8_t MISO = PIN_SPI_MISO;
-static const uint8_t SCK  = PIN_SPI_SCK;
+static const uint8_t SS	  = 4 ;
+static const uint8_t MOSI = PIN_SPI_MOSI ;
+static const uint8_t MISO = PIN_SPI_MISO ;
+static const uint8_t SCK  = PIN_SPI_SCK ;
 
 
 /*
@@ -130,86 +131,31 @@ static const uint8_t SCK  = PIN_SPI_SCK;
  */
 #define WIRE_INTERFACES_COUNT 1
 
-#define PIN_WIRE_SDA         (16u)
-#define PIN_WIRE_SCL         (17u)
-/*
-#define WIRE_INTERFACE       TWI1
-#define WIRE_INTERFACE_ID    ID_TWI1
-#define WIRE_ISR_HANDLER     TWI1_Handler
-#define WIRE_ISR_ID          TWI1_IRQn
-*/
+  // "external" public i2c interface
+#define PIN_WIRE_SDA         (4u)
+#define PIN_WIRE_SCL         (5u)
+#define PERIPH_WIRE          sercom2
+#define WIRE_IT_HANDLER      SERCOM2_Handler
+static const uint8_t SDA = PIN_WIRE_SDA;
+static const uint8_t SCL = PIN_WIRE_SCL;
 
-/*
- * UART/USART Interfaces
- */
-// Serial
-//#define PINS_UART            (81u)
+// USB
+// ---
+#define PIN_USB_HOST_ENABLE (14ul)
+#define PIN_USB_DM          (15ul)
+#define PIN_USB_DP          (16ul)
 
-/*
- * USB Interfaces
- */
-//#define PINS_USB             (85u)
+// I2S Interfaces
+// --------------
+#define I2S_INTERFACES_COUNT 0
 
-/*
- * Analog pins
- */
-static const uint8_t A0  = 24 ;
-static const uint8_t A1  = 25 ;
-static const uint8_t A2  = 26 ;
-static const uint8_t A3  = 27 ;
-static const uint8_t A4  = 28 ;
-static const uint8_t A5  = 29 ;
-#define ADC_RESOLUTION		12
-
-/*
- * DAC
- */
-/*
-#define DACC_INTERFACE		   DACC
-#define DACC_INTERFACE_ID	   ID_DACC
-#define DACC_RESOLUTION		   12
-#define DACC_ISR_HANDLER     DACC_Handler
-#define DACC_ISR_ID          DACC_IRQn
-*/
-
-/*
- * PWM
- */
-/*
-#define PWM_INTERFACE		PWM
-#define PWM_INTERFACE_ID	ID_PWM
-#define PWM_FREQUENCY		1000
-#define PWM_MAX_DUTY_CYCLE	255
-#define PWM_MIN_DUTY_CYCLE	0
-#define PWM_RESOLUTION		8
-*/
-
-/*
- * TC
- */
-/*
-#define TC_INTERFACE        TC0
-#define TC_INTERFACE_ID     ID_TC0
-#define TC_FREQUENCY        1000
-#define TC_MAX_DUTY_CYCLE   255
-#define TC_MIN_DUTY_CYCLE   0
-#define TC_RESOLUTION		8
-*/
-
+// Serial ports
+// ------------
 #ifdef __cplusplus
-}
-#endif
+#include "SERCOM.h"
+#include "Uart.h"
 
-/*----------------------------------------------------------------------------
- *        Arduino objects - C++ only
- *----------------------------------------------------------------------------*/
-
-#ifdef __cplusplus
-
-/*	=========================
- *	===== SERCOM DEFINITION
- *	=========================
-*/
+// Instances of SERCOM
 extern SERCOM sercom0;
 extern SERCOM sercom1;
 extern SERCOM sercom2;
@@ -217,10 +163,15 @@ extern SERCOM sercom3;
 extern SERCOM sercom4;
 extern SERCOM sercom5;
 
-extern Uart Serial;
-extern Uart Serial5;
+// Serial1
+extern Uart Serial1;
+#define PIN_SERIAL1_TX       (6ul)
+#define PIN_SERIAL1_RX       (7ul)
+#define PAD_SERIAL1_TX       (UART_TX_PAD_0)
+#define PAD_SERIAL1_RX       (SERCOM_RX_PAD_1)
+#endif // __cplusplus
 
-#endif
+
 
 // These serial port names are intended to allow libraries and architecture-neutral
 // sketches to automatically default to the correct port name for a particular type
@@ -237,15 +188,10 @@ extern Uart Serial5;
 //
 // SERIAL_PORT_HARDWARE_OPEN  Hardware serial ports which are open for use.  Their RX & TX
 //                            pins are NOT connected to anything by default.
-#define SERIAL_PORT_MONITOR         Serial
 #define SERIAL_PORT_USBVIRTUAL      SerialUSB
+#define SERIAL_PORT_MONITOR         SerialUSB
+#define SERIAL_PORT_HARDWARE        Serial1
 #define SERIAL_PORT_HARDWARE_OPEN   Serial1
-#define SERIAL_PORT_HARDWARE_OPEN1  Serial2
-#define SERIAL_PORT_HARDWARE_OPEN2  Serial3
-#define SERIAL_PORT_HARDWARE        Serial
-#define SERIAL_PORT_HARDWARE1       Serial1
-#define SERIAL_PORT_HARDWARE2       Serial2
-#define SERIAL_PORT_HARDWARE3       Serial3
 
-#endif /* _VARIANT_ARDUINO_ZERO_ */
-
+// Alias Serial to SerialUSB
+#define Serial                      SerialUSB
