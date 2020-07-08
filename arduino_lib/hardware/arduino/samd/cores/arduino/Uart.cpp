@@ -136,6 +136,7 @@ SercomParityMode Uart::extractParity(uint8_t config)
 	}
 }
 
+#if 0
 void SERCOM0_Handler()
 {
 	Serial5.IrqHandler();
@@ -144,3 +145,4 @@ void SERCOM5_Handler()
 {
 	Serial.IrqHandler();
 }
+#endif
