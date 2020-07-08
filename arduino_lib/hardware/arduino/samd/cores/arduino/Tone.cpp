@@ -86,6 +86,7 @@ void tone(uint8_t pin, unsigned int frequency, unsigned long duration)
             Channelx = 1;
       break;
 
+#if 0
       case PWM0_CH4 :
             TCCx = TCC0;
             Channelx = 0;
@@ -95,6 +96,7 @@ void tone(uint8_t pin, unsigned int frequency, unsigned long duration)
             TCCx = TCC0;
             Channelx = 1;
       break;
+#endif
 
       case PWM0_CH6 :
             TCCx = TCC0;
