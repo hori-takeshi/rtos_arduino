@@ -158,7 +158,7 @@ endif
 ifeq ($(UNAME_TARGET), Windows)
      OPENOCD_PATH = $(ARDUINO_PKG_DIR_WIN)\tools\OpenOCD\0.10.0-arduino7\bin\openocd.exe
      OPENOCD_SCRIPT_PATH = $(ARDUINO_PKG_DIR_WIN)\tools\OpenOCD\0.10.0-arduino7\share\openocd\scripts
-     OPENOCD_SCRIPT  = $(ARDUINO_PKG_DIR_WIN)\hardware\samd\1.8.4\variants\arduino_zero\openocd_scripts\arduino_zero.cfg
+     OPENOCD_SCRIPT  = $(ARDUINO_PKG_DIR_WIN)\hardware\samd\1.8.6\variants\arduino_zero\openocd_scripts\arduino_zero.cfg
      AVRDUDE_DIR= $(ARDUINO_PKG_DIR_WIN)\tools\avrdude\6.3.0-arduino17
      BOSSAC_DIR= $(ARDUINO_PKG_DIR_WIN)\tools\bossac\1.7.0-arduino3
 endif
