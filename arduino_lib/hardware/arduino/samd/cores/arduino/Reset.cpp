@@ -23,11 +23,36 @@
 extern "C" {
 #endif
 
+#define NVM_MEMORY ((volatile uint16_t *)0x000000)
+
+#if (ARDUINO_SAMD_VARIANT_COMPLIANCE >= 10610)
+
+extern const uint32_t __text_start__;
+#define APP_START ((volatile uint32_t)(&__text_start__) + 4)
+#else
+
+#if defined(__SAMD51__)
+#define APP_START 0x00004004
+#else
+#define APP_START 0x00002004
+#endif
+
+#endif
+
+static inline bool nvmReady(void) {
+#if defined(__SAMD51__)
+		return NVMCTRL->STATUS.reg & NVMCTRL_STATUS_READY;
+#else
+        return NVMCTRL->INTFLAG.reg & NVMCTRL_INTFLAG_READY;
+#endif
+}
+
 __attribute__ ((long_call, section (".ramfunc")))
 static void banzai() {
     // Disable all interrupts
     __disable_irq();
 
+#if 0 /* original code */
   	WDT->CONFIG.bit.PER = 0x0; //8 clock cycles period for WDT
 	WDT->CTRL.reg |= WDT_CTRL_ENABLE; //enable watchdog
 	while(1)
@@ -35,7 +60,35 @@ static void banzai() {
 		//wait for WDT
 	}
 	while (true);
+#else /* imported from the BSP of Seeeduino XIAO */
+	// Avoid erasing the application if APP_START is < than the minimum bootloader size
+	// This could happen if without_bootloader linker script was chosen
+	// Minimum bootloader size in SAMD21 family is 512bytes (RM section 22.6.5)
+	
+	if (APP_START < (0x200 + 4)) {
+		goto reset;
+	}
+	
+
+	// Erase application
+	while (!nvmReady())
+		;
+
+	NVMCTRL->STATUS.reg |= NVMCTRL_STATUS_MASK;
+	NVMCTRL->ADDR.reg  = (uintptr_t)&NVM_MEMORY[APP_START / 4];
+	NVMCTRL->CTRLA.reg = NVMCTRL_CTRLA_CMD_ER | NVMCTRL_CTRLA_CMDEX_KEY;
+	
+	while (!nvmReady())
+	;
+
+
+reset:
+	// Reset the device
+	NVIC_SystemReset() ;
+	
+#endif
 }
+
 
 static int ticks = -1;
 
