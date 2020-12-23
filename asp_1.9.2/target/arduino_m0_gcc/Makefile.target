@@ -176,7 +176,9 @@ ifeq ($(UNAME_TARGET), MacOS)
 endif
 endif
 
-run: $(OBJNAME).bin
+run: run-bossac
+
+run-m0pro: $(OBJNAME).bin
 ifeq ($(UNAME_TARGET), Cygwin)
 	"`cygpath -u "$(OPENOCD_PATH)"`" -s "$(OPENOCD_SCRIPT_PATH)" -f "$(OPENOCD_SCRIPT)" -c "program ./$(OBJNAME).bin 0x4000 reset exit"
 else
@@ -192,7 +194,8 @@ run-native: $(OBJNAME).srec
 
 # program with bossac
 run-bossac: $(OBJNAME).bin
-	$(BOSSAC_DIR)\bossac.exe -i -d --port=$(R2CA_NATIVE_PORT) \
+	$(BOSSAC_DIR)\bossac.exe -i -d \
+	--port=$(shell $(subst /,\,$(TARGETDIR))\wait4port\wait4port.bat $(R2CA_NATIVE_PORT) $(subst /,\,$(TARGETDIR))) \
 	-U true -i -e  -w -v \
 	$(OBJNAME).bin -R
 
